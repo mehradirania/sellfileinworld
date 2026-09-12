@@ -1,1 +1,95 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <title>CryptoDirect</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: #d9e8ff;
+    }
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+    h1 {
+      margin-top: 0;
+      text-align: center;
+    }
+    .product-list {
+      list-style: none;
+      padding: 0;
+      margin: 24px 0 0;
+    }
+    .product-list li {
+      padding: 12px 0;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .product-list a {
+      color: #1a4fb8;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .product-list a:hover {
+      text-decoration: underline;
+    }
+    .id {
+      font-size: 12px;
+      color: #777;
+      direction: ltr;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>CryptoDirect – لیست محصولات</h1>
+    <ul class="product-list" id="productList"></ul>
+  </div>
 
+  <script>
+    async function loadProducts() {
+      try {
+        const res = await fetch('products.json');
+        const data = await res.json();
+
+        const list = document.getElementById('productList');
+        list.innerHTML = '';
+
+        // تبدیل به آرایه و مرتب‌سازی بر اساس createdAt (جدیدترین بالا)
+        const entries = Object.entries(data)
+          .sort((a, b) => (b[1].createdAt || 0) - (a[1].createdAt || 0));
+
+        entries.forEach(([id, product]) => {
+          const li = document.createElement('li');
+
+          const link = document.createElement('a');
+          link.href = `product.html?id=${encodeURIComponent(id)}`;
+          link.textContent = product.name;
+
+          const spanId = document.createElement('span');
+          spanId.className = 'id';
+          spanId.textContent = id;
+
+          li.appendChild(link);
+          li.appendChild(spanId);
+          list.appendChild(li);
+        });
+      } catch (e) {
+        document.getElementById('productList').innerHTML =
+          '<li>خطا در بارگذاری محصولات</li>';
+      }
+    }
+
+    loadProducts();
+  </script>
+</body>
+</html>
